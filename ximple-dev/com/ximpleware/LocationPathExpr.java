@@ -2388,6 +2388,9 @@ public class LocationPathExpr extends Expr{
 		  		 state =  BACKWARD;
 		  	vn.push2();
 		  	while (vn.toElement(VTDNav.PS)){
+		  	    	if(vn.atTerminal &&  !(currentStep.nt_eval || currentStep.nt.eval(vn) )){
+		  	        	break;
+	            		}
 		  		if ((currentStep.nt_eval || currentStep.nt.eval(vn)) 
 		  				&& ((!currentStep.hasPredicate) || currentStep.evalPredicates(vn))){
 		  			if (currentStep.nextS!=null){
@@ -2421,6 +2424,9 @@ public class LocationPathExpr extends Expr{
 		  
 		  case  BACKWARD:
 		  	while (vn.toElement(VTDNav.PS)){
+		  		if(vn.atTerminal &&  !(currentStep.nt_eval || currentStep.nt.eval(vn) )){
+		  	       		break;
+		  	    	}
 		  		if ((currentStep.nt_eval || currentStep.nt.eval(vn)) 
 		  				&& ((!currentStep.hasPredicate) || currentStep.evalPredicates(vn))){
 		  			if (currentStep.nextS!=null){
@@ -2777,8 +2783,11 @@ public class LocationPathExpr extends Expr{
 				}
 			}
 		}
-		
+		int ctr = 0;
 		while (true) {
+			if(ctr++ > 100000){
+		        	throw new XPathEvalException("Cyclic XPATH detected"); 
+		    	}
 			switch (currentStep.axis_type) {
 
 			case AxisType.CHILD0:
